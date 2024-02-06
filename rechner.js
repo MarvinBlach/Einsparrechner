@@ -114,35 +114,32 @@ function getDataForYear(year) {
 }
 
 
-
-
-
-
-
-/*
-// Function to calculate the value
-function calculateValue() {
+function calculateDifference() {
     // Select the trigger element
     let triggerElement = document.querySelector('[hs-form="trigger"]');
 
     // Attach a click event listener to the triggerElement
     triggerElement.addEventListener('click', function() {
-        // Convert the baujahr to a range
-        let baujahrRange = convertYearToRange(baujahr);
+        // Get the data for the selected year
+        let data = getDataForYear(baujahr);
 
-        // Get the energy consumption data for the selected zustand and baujahr
-        let energyConsumption = energyConsumptionData[zustand][baujahrRange];
+        // Get the energy consumption for 'unsaniert', 'teilsaniert', and 'ambitioniert saniert'
+        let unsaniertEnergy = data['unsaniert'] ? data['unsaniert']['energy'] : null; // Safeguarding in case 'unsaniert' data does not exist
+        let teilsaniertEnergy = data['teilsaniert']['energy'];
+        let ambitioniertSaniertEnergy = data['ambitioniert saniert'];
 
-        // Get the refurbishment condition data for the selected zustand and baujahr
-        let refurbishmentCondition = refurbishmentConditionData[zustand][baujahrRange];
+        // Calculate the difference between each sanierung condition and 'ambitioniert saniert'
+        let differenceUnsaniertAmbitioniert = unsaniertEnergy !== null ? unsaniertEnergy - ambitioniertSaniertEnergy : 'N/A';
+        let differenceTeilsaniertAmbitioniert = teilsaniertEnergy - ambitioniertSaniertEnergy;
 
-        // Calculate the value
-        let value = (energyConsumption - energyConsumptionData['ambitioniert saniert'][baujahrRange]) * flaeche * 1;
-
-        console.log(value); // This will log the calculated value
+        // Log the differences
+        if (unsaniertEnergy !== null) {
+            console.log(`Difference between Unsaniert and Ambitioniert Saniert: ${differenceUnsaniertAmbitioniert}`);
+        }
+        console.log(`Difference between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
     });
 }
 
-// Call the calculateValue function
-calculateValue();
-*/
+// Call the calculateDifference function
+calculateDifference();
+
