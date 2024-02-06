@@ -25,6 +25,15 @@ function getCategory() {
 // Call the getCategory function
 getCategory();
 
+// Adjust the getFlaeche function if necessary to ensure flaeche is globally accessible
+function getFlaeche() {
+    let flaecheElement = document.querySelector('[hs-form="flaeche"]');
+    flaecheElement.addEventListener('change', function() {
+        flaeche = flaecheElement.value; // This will update the global flaeche variable
+        console.log(flaeche); // Log the value of flaeche element
+    });
+}
+
 // Function to get the selected zustand
 function getZustand() {
     let zustandElement = document.querySelector('[hs-form="zustand"]');
@@ -117,7 +126,6 @@ function calculateDifference() {
         let data = getDataForYear(baujahr); // Assuming 'baujahr' is defined correctly elsewhere
         console.log('Data retrieved:', data);
 
-        // Ensure flaeche is correctly parsed as a number
         let parsedFlaeche = parseFloat(flaeche);
         if (isNaN(parsedFlaeche)) {
             console.log('Flaeche is not a valid number');
@@ -126,42 +134,37 @@ function calculateDifference() {
 
         let unsaniertEnergy = data['unsaniert'] ? data['unsaniert']['energy'] : null;
         let teilsaniertEnergy = data['teilsaniert'] ? data['teilsaniert']['energy'] : null;
-        let ambitioniertSaniertEnergy = data['ambitioniert saniert']; // Directly access the value
-
-        console.log('Energy values - Unsaniert:', unsaniertEnergy, 'Teilsaniert:', teilsaniertEnergy, 'Ambitioniert Saniert:', ambitioniertSaniertEnergy);
+        let ambitioniertSaniertEnergy = data['ambitioniert saniert'];
 
         function roundToNearestHundred(value) {
             return Math.round(value / 100) * 100;
         }
 
+        let result;
         if (selectedZustand === 'Unsaniert' && unsaniertEnergy !== null) {
-            let differenceUnsaniertAmbitioniert = (unsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
-            differenceUnsaniertAmbitioniert = roundToNearestHundred(differenceUnsaniertAmbitioniert);
-            console.log(`Rounded difference (multiplied by Flaeche and 0.1) between Unsaniert and Ambitioniert Saniert: ${differenceUnsaniertAmbitioniert}`);
+            result = (unsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
+            result = roundToNearestHundred(result);
         } else if (selectedZustand === 'Teilsaniert' && teilsaniertEnergy !== null) {
-            let differenceTeilsaniertAmbitioniert = (teilsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
-            differenceTeilsaniertAmbitioniert = roundToNearestHundred(differenceTeilsaniertAmbitioniert);
-            console.log(`Rounded difference (multiplied by Flaeche and 0.1) between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
+            result = (teilsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
+            result = roundToNearestHundred(result);
         } else {
             console.log('No valid zustand selected or missing data for calculation.');
+            return; // Exit the function if no valid zustand is selected
+        }
+
+        // Select the element with hs-result attribute and update its content
+        let resultElement = document.querySelector('[hs-result="value"]');
+        if (resultElement) {
+            resultElement.textContent = result; // Or use .innerHTML if you need to insert HTML content
+            console.log(`Result updated to: ${result}`);
+        } else {
+            console.log('Result element not found.');
         }
     });
 }
 
 
 
-// Adjust the getFlaeche function if necessary to ensure flaeche is globally accessible
-function getFlaeche() {
-    let flaecheElement = document.querySelector('[hs-form="flaeche"]');
-    flaecheElement.addEventListener('change', function() {
-        flaeche = flaecheElement.value; // This will update the global flaeche variable
-        console.log(flaeche); // Log the value of flaeche element
-    });
-}
-
-// Call the getFlaeche function
 getFlaeche();
-
-// Ensure getZustand and calculateDifference are also called
 getZustand();
 calculateDifference();
