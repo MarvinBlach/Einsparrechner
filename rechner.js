@@ -130,17 +130,24 @@ function calculateDifference() {
 
         console.log('Energy values - Unsaniert:', unsaniertEnergy, 'Teilsaniert:', teilsaniertEnergy, 'Ambitioniert Saniert:', ambitioniertSaniertEnergy);
 
+        function roundToNearestHundred(value) {
+            return Math.round(value / 100) * 100;
+        }
+
         if (selectedZustand === 'Unsaniert' && unsaniertEnergy !== null) {
-            let differenceUnsaniertAmbitioniert = (unsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche;
-            console.log(`Difference between Unsaniert and Ambitioniert Saniert (multiplied by Flaeche): ${differenceUnsaniertAmbitioniert}`);
+            let differenceUnsaniertAmbitioniert = (unsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
+            differenceUnsaniertAmbitioniert = roundToNearestHundred(differenceUnsaniertAmbitioniert);
+            console.log(`Rounded difference (multiplied by Flaeche and 0.1) between Unsaniert and Ambitioniert Saniert: ${differenceUnsaniertAmbitioniert}`);
         } else if (selectedZustand === 'Teilsaniert' && teilsaniertEnergy !== null) {
-            let differenceTeilsaniertAmbitioniert = (teilsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche;
-            console.log(`Difference between Teilsaniert and Ambitioniert Saniert (multiplied by Flaeche): ${differenceTeilsaniertAmbitioniert}`);
+            let differenceTeilsaniertAmbitioniert = (teilsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche * 0.1;
+            differenceTeilsaniertAmbitioniert = roundToNearestHundred(differenceTeilsaniertAmbitioniert);
+            console.log(`Rounded difference (multiplied by Flaeche and 0.1) between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
         } else {
             console.log('No valid zustand selected or missing data for calculation.');
         }
     });
 }
+
 
 
 // Adjust the getFlaeche function if necessary to ensure flaeche is globally accessible
