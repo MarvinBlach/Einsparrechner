@@ -1,7 +1,7 @@
 // Global variables
 let category;
 let baujahr;
-let zustand;
+let selectedZustand;
 let flaeche;
 
 // Function to get the category
@@ -25,6 +25,15 @@ function getCategory() {
 // Call the getCategory function
 getCategory();
 
+// Function to get the selected zustand
+function getZustand() {
+    let zustandElement = document.querySelector('[hs-form="zustand"]');
+    zustandElement.addEventListener('change', function() {
+        selectedZustand = zustandElement.value;
+        console.log('Selected Zustand:', selectedZustand); // Confirm selected zustand is logged
+    });
+}
+
 // Function to get the baujahr
 function getBaujahr() {
     // Select the element with hs-form attribute
@@ -44,22 +53,6 @@ function getBaujahr() {
 // Call the getBaujahr function
 getBaujahr();
 
-// Function to get the zustand
-function getZustand() {
-    // Select the element with hs-form attribute
-    let zustandElement = document.querySelector('[hs-form="zustand"]');
-
-    // Attach a change event listener to the zustandElement
-    zustandElement.addEventListener('change', function() {
-        // Get the value of the zustand element
-        zustand = zustandElement.value;
-
-        console.log(zustand); // This will log the value of the zustand element
-    });
-}
-
-// Call the getZustand function
-getZustand();
 
 
 // Function to get the flaeche
@@ -114,32 +107,40 @@ function getDataForYear(year) {
 }
 
 
+
+
+// Adjusted calculateDifference function with added console logs
 function calculateDifference() {
-    // Select the trigger element
     let triggerElement = document.querySelector('[hs-form="trigger"]');
-
-    // Attach a click event listener to the triggerElement
     triggerElement.addEventListener('click', function() {
-        // Get the data for the selected year
-        let data = getDataForYear(baujahr);
+        console.log('Trigger clicked');
 
-        // Get the energy consumption for 'unsaniert', 'teilsaniert', and 'ambitioniert saniert'
-        let unsaniertEnergy = data['unsaniert'] ? data['unsaniert']['energy'] : null; // Safeguarding in case 'unsaniert' data does not exist
-        let teilsaniertEnergy = data['teilsaniert']['energy'];
-        let ambitioniertSaniertEnergy = data['ambitioniert saniert'];
+        let data = getDataForYear(baujahr); // Assuming 'baujahr' is defined correctly elsewhere
+        console.log('Data retrieved:', data);
 
-        // Calculate the difference between each sanierung condition and 'ambitioniert saniert'
-        let differenceUnsaniertAmbitioniert = unsaniertEnergy !== null ? unsaniertEnergy - ambitioniertSaniertEnergy : 'N/A';
-        let differenceTeilsaniertAmbitioniert = teilsaniertEnergy - ambitioniertSaniertEnergy;
+        let unsaniertEnergy = data['unsaniert'] ? data['unsaniert']['energy'] : null;
+        let teilsaniertEnergy = data['teilsaniert'] ? data['teilsaniert']['energy'] : null;
+        let ambitioniertSaniertEnergy = data['ambitioniert saniert']; // Now correctly accessing the energy value
 
-        // Log the differences
-        if (unsaniertEnergy !== null) {
+        console.log('Energy values - Unsaniert:', unsaniertEnergy, 'Teilsaniert:', teilsaniertEnergy, 'Ambitioniert Saniert:', ambitioniertSaniertEnergy);
+
+        // Ensure the comparison with selectedZustand is correct
+        if (selectedZustand === 'Unsaniert' && unsaniertEnergy !== null) {
+            let differenceUnsaniertAmbitioniert = unsaniertEnergy - ambitioniertSaniertEnergy;
             console.log(`Difference between Unsaniert and Ambitioniert Saniert: ${differenceUnsaniertAmbitioniert}`);
+        } else if (selectedZustand === 'Teilsaniert' && teilsaniertEnergy !== null) {
+            let differenceTeilsaniertAmbitioniert = teilsaniertEnergy - ambitioniertSaniertEnergy;
+            console.log(`Difference between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
+        } else {
+            // This else block might be causing the unexpected behavior
+            // It's important to ensure this block is reached only when expected
+            console.log('No valid zustand selected or missing data for calculation.');
         }
-        console.log(`Difference between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
     });
 }
 
-// Call the calculateDifference function
-calculateDifference();
 
+
+// Call the functions to activate them
+getZustand();
+calculateDifference();
