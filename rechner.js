@@ -54,7 +54,7 @@ function getBaujahr() {
 getBaujahr();
 
 
-
+/*
 // Function to get the flaeche
 function getFlaeche() {
     // Select the element with hs-form attribute
@@ -70,7 +70,7 @@ function getFlaeche() {
 }
 
 // Call the getFlaeche function
-getFlaeche();
+getFlaeche();  */
 
 
 // First, the table data would be represented in a JavaScript object like this:
@@ -109,7 +109,6 @@ function getDataForYear(year) {
 
 
 
-// Adjusted calculateDifference function with added console logs
 function calculateDifference() {
     let triggerElement = document.querySelector('[hs-form="trigger"]');
     triggerElement.addEventListener('click', function() {
@@ -118,29 +117,44 @@ function calculateDifference() {
         let data = getDataForYear(baujahr); // Assuming 'baujahr' is defined correctly elsewhere
         console.log('Data retrieved:', data);
 
+        // Ensure flaeche is correctly parsed as a number
+        let parsedFlaeche = parseFloat(flaeche);
+        if (isNaN(parsedFlaeche)) {
+            console.log('Flaeche is not a valid number');
+            return; // Exit the function if flaeche is not a valid number
+        }
+
         let unsaniertEnergy = data['unsaniert'] ? data['unsaniert']['energy'] : null;
         let teilsaniertEnergy = data['teilsaniert'] ? data['teilsaniert']['energy'] : null;
-        let ambitioniertSaniertEnergy = data['ambitioniert saniert']; // Now correctly accessing the energy value
+        let ambitioniertSaniertEnergy = data['ambitioniert saniert']; // Directly access the value
 
         console.log('Energy values - Unsaniert:', unsaniertEnergy, 'Teilsaniert:', teilsaniertEnergy, 'Ambitioniert Saniert:', ambitioniertSaniertEnergy);
 
-        // Ensure the comparison with selectedZustand is correct
         if (selectedZustand === 'Unsaniert' && unsaniertEnergy !== null) {
-            let differenceUnsaniertAmbitioniert = unsaniertEnergy - ambitioniertSaniertEnergy;
-            console.log(`Difference between Unsaniert and Ambitioniert Saniert: ${differenceUnsaniertAmbitioniert}`);
+            let differenceUnsaniertAmbitioniert = (unsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche;
+            console.log(`Difference between Unsaniert and Ambitioniert Saniert (multiplied by Flaeche): ${differenceUnsaniertAmbitioniert}`);
         } else if (selectedZustand === 'Teilsaniert' && teilsaniertEnergy !== null) {
-            let differenceTeilsaniertAmbitioniert = teilsaniertEnergy - ambitioniertSaniertEnergy;
-            console.log(`Difference between Teilsaniert and Ambitioniert Saniert: ${differenceTeilsaniertAmbitioniert}`);
+            let differenceTeilsaniertAmbitioniert = (teilsaniertEnergy - ambitioniertSaniertEnergy) * parsedFlaeche;
+            console.log(`Difference between Teilsaniert and Ambitioniert Saniert (multiplied by Flaeche): ${differenceTeilsaniertAmbitioniert}`);
         } else {
-            // This else block might be causing the unexpected behavior
-            // It's important to ensure this block is reached only when expected
             console.log('No valid zustand selected or missing data for calculation.');
         }
     });
 }
 
 
+// Adjust the getFlaeche function if necessary to ensure flaeche is globally accessible
+function getFlaeche() {
+    let flaecheElement = document.querySelector('[hs-form="flaeche"]');
+    flaecheElement.addEventListener('change', function() {
+        flaeche = flaecheElement.value; // This will update the global flaeche variable
+        console.log(flaeche); // Log the value of flaeche element
+    });
+}
 
-// Call the functions to activate them
+// Call the getFlaeche function
+getFlaeche();
+
+// Ensure getZustand and calculateDifference are also called
 getZustand();
 calculateDifference();
