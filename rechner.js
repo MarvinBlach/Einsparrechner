@@ -165,6 +165,52 @@ function calculateDifference() {
 
 
 
-getFlaeche();
+function updateSkalaIndicatorPosition() {
+    let triggerElement = document.querySelector('[hs-form="trigger"]');
+    triggerElement.addEventListener('click', function() {
+        console.log('Trigger clicked for updating skala indicator');
+
+        let data = getDataForYear(baujahr); // Assuming 'baujahr' is defined correctly elsewhere
+        console.log('Data for Skala Indicator:', data);
+
+        // Retrieve condition based on the selected 'zustand'
+        let condition;
+        if (selectedZustand === 'Unsaniert') {
+            condition = data['unsaniert'] ? data['unsaniert']['condition'] : 'mittel';
+        } else if (selectedZustand === 'Teilsaniert') {
+            condition = data['teilsaniert'] ? data['teilsaniert']['condition'] : 'mittel';
+        } else {
+            console.log('No valid zustand selected for skala indicator update.');
+            return; // Exit the function if no valid zustand is selected
+        }
+
+        // Map condition to percentage for the skala indicator
+        const conditionToPercentage = {
+            'sehr schlecht': 0,
+            'schlecht': 25,
+            'mittel': 50,
+            'gut': 75,
+            'sehr gut': 100
+        };
+
+        let percentage = conditionToPercentage[condition.toLowerCase()];
+        console.log(`Condition: ${condition}, Percentage: ${percentage}%`);
+
+        // Find the .step-form_skala-indicator element and update its margin-left style
+        let indicator = document.querySelector('.step-form_skala-indicator');
+        if (indicator) {
+            indicator.style.marginLeft = `${percentage}%`;
+            console.log(`Skala indicator position updated to: ${percentage}%`);
+        } else {
+            console.log('Skala indicator element not found.');
+        }
+    });
+}
+
+// Make sure to call both getZustand() and getFlaeche() as needed before this function
 getZustand();
+getFlaeche();
 calculateDifference();
+updateSkalaIndicatorPosition();
+
+
