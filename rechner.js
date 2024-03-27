@@ -1,7 +1,7 @@
 // Global variables
 let category;
 let baujahr;
-let selectedZustand;
+let selectedZustand = 'Unsaniert'; // Set default zustand to 'Unsaniert'
 let flaeche;
 
 // Function to get the category
@@ -35,8 +35,16 @@ function getFlaeche() {
 }
 
 // Function to get the selected zustand
+// Declare selectedZustand globally
+
+// Function to get the selected zustand
 function getZustand() {
     let zustandElement = document.querySelector('[hs-form="zustand"]');
+    
+    zustandElement.value = selectedZustand; // Set the default value in the UI
+
+    console.log('Default Zustand:', selectedZustand); // Log the default zustand
+
     zustandElement.addEventListener('change', function() {
         selectedZustand = zustandElement.value;
         console.log('Selected Zustand:', selectedZustand); // Confirm selected zustand is logged
