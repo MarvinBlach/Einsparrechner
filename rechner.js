@@ -212,6 +212,17 @@ function updateSkalaIndicatorPosition() {
         } else {
             console.log('Skala indicator element not found.');
         }
+
+        // Find the hs-zustand element and update its text content with the calculated condition
+        let zustandElement = document.querySelector('[hs-zustand]');
+        if (zustandElement) {
+            // Capitalize the first letter and add 'er' at the end before 'Zustand'
+            let displayCondition = `${condition.charAt(0).toUpperCase() + condition.slice(1)}er Zustand`;
+            zustandElement.textContent = displayCondition;
+            console.log(`Zustand element updated to: ${displayCondition}`);
+        } else {
+            console.log('Zustand element not found.');
+        }
     });
 }
 
